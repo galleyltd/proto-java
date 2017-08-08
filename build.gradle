@@ -1,0 +1,62 @@
+plugins {
+    id "java"
+    id "maven-publish"
+    id "com.google.protobuf" version "0.8.2"
+    id "org.ajoberstar.grgit" version "1.7.2"
+}
+
+group 'io.prodrink.proto'
+version '0.0.1-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+ext {
+    protocVersion = '3.3.0' // TODO: remove in favor of protoc.properties file
+    grpcJavaVersion = '1.5.0'
+}
+
+dependencies {
+    compile "io.grpc:grpc-all:${grpcJavaVersion}"
+}
+
+repositories {
+    mavenCentral()
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protocVersion}"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcJavaVersion}"
+        }
+    }
+}
+
+task cloneProtoDefRepository {
+    doLast {
+        def protoFolderPath = 'src/main/proto'
+
+        new File(protoFolderPath).deleteDir()
+        org.ajoberstar.grgit.Grgit.clone(
+                dir: protoFolderPath,
+                uri: 'git@github.com:prodrink/proto.git'
+        )
+        new File("${protoFolderPath}/.gitignore").delete()
+        new File("${protoFolderPath}/README.md").delete()
+        new File("${protoFolderPath}/.git").deleteDir()
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+classes {
+    dependsOn cloneProtoDefRepository
+}
