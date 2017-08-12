@@ -32,6 +32,11 @@ protobuf {
             artifact = "io.grpc:protoc-gen-grpc-java:${grpcJavaVersion}"
         }
     }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
 }
 
 task cloneProtoDefRepository {
