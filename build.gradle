@@ -61,3 +61,8 @@ publishing {
         }
     }
 }
+
+task downloadDependencies(type: Exec) {
+    configurations.compile.files
+    commandLine 'echo', 'Downloaded all dependencies'
+}
