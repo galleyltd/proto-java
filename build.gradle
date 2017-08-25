@@ -61,7 +61,3 @@ publishing {
         }
     }
 }
-
-classes {
-    dependsOn cloneProtoDefRepository
-}
